@@ -78,11 +78,44 @@ Hazard:: An obstacle that gets in the particle's way on the way to the goal,
   increasing the challenge of the shot.
 Field:: Area of play that contains hazards and the goal location.
 Par:: predetermined number of shots to reach the goal location for a given field.
-
+Supply chain attack:: A cyber-attacker compromises libraries or other
+  dependencies of an application to attack systems that use the application.
 
 == User interface
 
-== Technical details
+The game is rendered in a text based console.
+The image below shows a concept drawing of the interface.
+
+image::ui-design.svg[]
+
+Positive and negative charges are denoted by plus (+) and minus (-) symbols
+while neutral particles use an open symbol (o).
+Each charge also as an associated color.
+This lets users predict the behavior of the shot particle.
+
+The goal location and shot location use unique symbols and colors.
+
+As the charged particle moves through the field
+it leaves a trail of small dots behind.
+This lets users better see where the particle had been,
+allowing them to adjust future shots.
+To avoid cluttering the UI,
+these dots disappear after a given number of movement steps
+or when the user takes the next shot.
+
+To take a shot,
+the user clicks and drags the start location
+pulling the particle back.
+They release the mouse button to launch the particle,
+giving it an initial velocity.
+
+Some useful unicode characters include:
++ - ⨁ ⊕ ⊝ ⦾ ⊙ ✪ ★ ⊚ ⎊ 🟕 ② ⊖ 🟗 ⊜ ○ ● ◯ 🞇 🞄 🞊 ◌ · ⸳ (+) (-) (o) ( )
+
+See https://unicode-table.com/en/ for additional characters.
+
+
+== Additional details
 
 === Coulomb's law
 
@@ -118,56 +151,18 @@ stem:[x_0] is the current position,
 stem:[v] is the initial velocity,
 and stem:[t] is the change in time.
 
+This game does not take into account magnetism or quantum effects
+of fast moving charged particles.
 
-////
-TODO: Outline:
-* Overview
-  * Name: Coulomb's Golf
-  * Byline -
-    * Something abot charge?
-    * Play a round of golf with Coulomb.
-  * Note Game jam title and due date, and requirements
-  * Game Summary
-    * Get point charge to a goal location
-    * Point charge obas Coulomb's Law
-    * Environment is made up of other chargs, both positive and negative
-    * If a positive touches a negative, the carge goes to zero.
-  * Unique selling points
-    * Open source
-    * I do not think this section is needed.
-  * Similar games
-    * [n-body](https://sokpop.itch.io/n-body) - 2020 - Sokpop Collective
-    * Moonshot Galaxy™ - 2016 - https://store.steampowered.com/app/471160/Moonshot_Galaxy/
-    * Comet Golf - 2020 - Comet Golf Project Team - https://store.steampowered.com/app/1200300/Comet_Golf/
-  * Interpretation of Theme "Round"
-    * Round of golf
-    * Form round paths
-    * Charges are cassically considered as round as well
-* Glossary
-  * Charge / point charge
-  * Field
-  * Positive / negative
-  * par
-* User Interface
-  * Use (+) for positive, (-) for negative, and (0) for netural. Additinoally, they use different colors (cyan, lime green, white)
-  * Use a character to indicate the goal (red color)
-  * Charater for the point charge (period? (-)? )
-  * Have dots follow the character's path so users can see where it has been.  Use X number of dots.
-  * Use mouse to pull back or aim the point charge.
-  * Use character for starting location and/or angle.
-* Other Considerations
-  * MVP
-  * Target audiance
-  * Target platform
-  * Licensing and disturaiton
-    * MIT license
-    * Put on GitHub
-* Technical design / Considerations
-  * Coulomb's law and equations https://en.wikipedia.org/wiki/Coulomb%27s_law
-    * Note the limiations, speciflcially, we are ignoring "The charges must be stationary with respect to each other."
-  * FLex UI stuff
-    * Docs https://arthursonzogni.github.io/FTXUI/
-    * See the examples/component/canvas_animated.cpp for how to do some drawing
-  * System and Data Security
-    * Supply chian attack risk
-////
+=== System and data security
+
+Software security is an important consideration of any application, including games.
+
+This game does not open network connections or load arbitrary data from disk,
+thus it is at low risk of a direct attack.
+It also does not use or store personal user data.
+
+The biggest risk to the game is a supply chain attack
+as this game uses several third party libraries.
+To mitigate the risk,
+only libraries provided by the getting started template are used.
