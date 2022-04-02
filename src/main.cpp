@@ -10,7 +10,7 @@
 #include <spdlog/spdlog.h>
 
 // This file will be generated automatically when you run the CMake
-// configuration step. It creates a namespace called `coulomb-golf`. You can modify
+// configuration step. It creates a namespace called `coulomb_golf`. You can modify
 // the source template at `configured_files/config.hpp.in`.
 #include <internal_use_only/config.hpp>
 
@@ -322,8 +322,8 @@ int main(int argc, const char **argv)
       { std::next(argv), std::next(argv, argc) },
       true,// show help if requested
       fmt::format("{} {}",
-        coulomb-golf::cmake::project_name,
-        coulomb-golf::cmake::project_version));// version string, acquired
+        coulomb_golf::cmake::project_name,
+        coulomb_golf::cmake::project_version));// version string, acquired
                                             // from config.hpp via CMake
 
     if (args["turn_based"].asBool()) {
