@@ -90,16 +90,16 @@ namespace {
     registry.emplace<Position>(entity2, 0.0F, 0.0F);
   }
 
-  void test_move_system(entt::registry &registry)
+  void test_move_system(entt::registry &registry, const Delta delta)
   {
 
     for (auto [entity, position] : registry.view<Position>().each()) {
-      position.x += 0.1F;
-      position.y += 0.1F;
+      position.x += 2.0F * delta.count();
+      position.y += 2.0F * delta.count();
     }
   }
 
-  void update(entt::registry &registry) { test_move_system(registry); }
+  void update(entt::registry &registry, const Delta delta) { test_move_system(registry, delta); }
 
   std::tuple<int, int> world_to_screen(const Position &position)
   {
@@ -109,18 +109,28 @@ namespace {
     };
   }
 
+  Position mouse_to_world(int mouse_x, int mouse_y)
+  {
+    return {
+      .x = static_cast<float>(mouse_x) * 2.0F,
+      .y = static_cast<float>(mouse_y) * 4.0F,
+    };
+  }
 
   void render_loop()
   {
     entt::registry registry;
-    // TODO: store ellapsed time.
+    Delta delta{};
+    auto last_update_time = std::chrono::steady_clock::now();
 
     add_entities(registry);
 
-    auto canvas_renderer = ftxui::Renderer([&registry] {
+    auto canvas_renderer = ftxui::Renderer([&registry, &delta, &last_update_time] {
       // Update the game.
-      // TODO: Get ellapsed time
-      update(registry);
+      auto update_time = std::chrono::steady_clock::now();
+      delta = update_time - last_update_time;
+      last_update_time = update_time;
+      update(registry, delta);
 
       // Render the game's sprites.
       auto c = ftxui::Canvas(200, 200);
@@ -132,6 +142,19 @@ namespace {
 
       return canvas(std::move(c));
     });
+
+    // This capture the last mouse position.
+    auto canvas_renderer_with_events = CatchEvent(canvas_renderer, [&](ftxui::Event e) {
+      if (e.is_mouse() && e.mouse().button == ftxui::Mouse::Left) {
+        const auto position = mouse_to_world(e.mouse().x, e.mouse().y);
+        const auto entity = registry.create();
+        registry.emplace<Position>(entity, position);
+        registry.emplace<Sprite>(entity, "⊝", ftxui::Color::Green);
+        registry.emplace<Charge>(entity, -1.0F);
+      }
+      return false;
+    });
+
 
     auto screen = ftxui::ScreenInteractive::Fullscreen();
 
@@ -146,7 +169,7 @@ namespace {
     });
 
     // Enter the screen's main loop.
-    screen.Loop(canvas_renderer);
+    screen.Loop(canvas_renderer_with_events);
     refresh_ui_continue = false;
     refresh_ui.join();
   }
